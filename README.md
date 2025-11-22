@@ -1,103 +1,72 @@
-# 🎭 Emotion Detection from Speech
+# Emotion detection using deep learning
 
-A compact and insightful project exploring **emotion classification** using **audio feature extraction**, **signal processing**, and **machine learning models**. The goal is to identify human emotions (like happy, sad, angry, neutral) from raw speech signals by transforming audio into meaningful vector representations.
+## Introduction
 
----
+This project aims to classify the emotion on a person's face into one of **seven categories**, using deep convolutional neural networks. The model is trained on the **FER-2013** dataset which was published on International Conference on Machine Learning (ICML). This dataset consists of 35887 grayscale, 48x48 sized face images with **seven emotions** - angry, disgusted, fearful, happy, neutral, sad and surprised.
 
-## 📌 Features
-- Extraction of **MFCC**, **chroma**, **mel spectrogram**, and other audio descriptors  
-- Preprocessing pipeline for trimming, normalizing, and cleaning audio  
-- Machine learning model training (SVM / Random Forest / MLP)  
-- Evaluation using accuracy, confusion matrix, and performance metrics  
-- Modular Python structure for easy extension  
-- Supports custom datasets
+## Dependencies
 
----
+* Python 3, [OpenCV](https://opencv.org/), [Tensorflow](https://www.tensorflow.org/)
+* To install the required packages, run `pip install -r requirements.txt`.
 
-## 🚀 How It Works
-1. Load audio files  
-2. Extract handcrafted features  
-3. Feed features to ML model  
-4. Predict emotion  
-5. Evaluate results
+## Basic Usage
 
-The project follows a clean, stepwise pipeline so you can plug in new emotions or switch models effortlessly.
+The repository is currently compatible with `tensorflow-2.0` and makes use of the Keras API using the `tensorflow.keras` library.
 
----
+* First, clone the repository and enter the folder
 
-## 📁 Project Structure
-
-```
-Emotion-Detection/
-│── data/                  # audio files (not included in repo)
-│── features/              # extracted feature numpy files
-│── models/                # saved ML models
-│── src/
-│   ├── extract_features.py
-│   ├── train_model.py
-│   ├── predict.py
-│   └── utils.py
-│── requirements.txt
-│── README.md
-```
-
----
-
-## 🧪 Tech Stack
-- Python  
-- Librosa  
-- NumPy  
-- Scikit-learn  
-- Matplotlib  
-
----
-
-## 🖼️ Output Screenshots
-(Add your output images here once you upload them)
-
-```
-![Feature Visualization](outputs/feature_plot.png)
-![Confusion Matrix](outputs/cm.png)
-```
-
----
-
-## ▶️ Running the Project
-
-### Install dependencies
 ```bash
-pip install -r requirements.txt
+git clone https://github.com/atulapra/Emotion-detection.git
+cd Emotion-detection
 ```
 
-### Extract features
+* Download the FER-2013 dataset inside the `src` folder.
+
+* If you want to train this model, use:  
+
 ```bash
-python src/extract_features.py
+cd src
+python emotions.py --mode train
 ```
 
-### Train model
+* If you want to view the predictions without training again, you can download the pre-trained model from [here](https://drive.google.com/file/d/1FUn0XNOzf-nQV7QjbBPA6-8GLoHNNgv-/view?usp=sharing) and then run:  
+
 ```bash
-python src/train_model.py
+cd src
+python emotions.py --mode display
 ```
 
-### Predict emotion
-```bash
-python src/predict.py --file sample.wav
-```
+* The folder structure is of the form:  
+  src:
+  * data (folder)
+  * `emotions.py` (file)
+  * `haarcascade_frontalface_default.xml` (file)
+  * `model.h5` (file)
 
----
+* This implementation by default detects emotions on all faces in the webcam feed. With a simple 4-layer CNN, the test accuracy reached 63.2% in 50 epochs.
 
-## 📈 Results
-- Achieved strong accuracy on multi-class emotion dataset  
-- Robust for real-world speech variations  
-- Model generalizes well to unseen voices  
+![Accuracy plot](imgs/accuracy.png)
 
----
+## Data Preparation (optional)
 
-## 🙌 Contributions
-Feel free to fork the repo, open issues, or submit PRs.
+* The [original FER2013 dataset in Kaggle](https://www.kaggle.com/deadskull7/fer2013) is available as a single csv file. I had converted into a dataset of images in the PNG format for training/testing.
 
----
+* In case you are looking to experiment with new datasets, you may have to deal with data in the csv format. I have provided the code I wrote for data preprocessing in the `dataset_prepare.py` file which can be used for reference.
 
-## 📜 License
-MIT License
+## Algorithm
 
+* First, the **haar cascade** method is used to detect faces in each frame of the webcam feed.
+
+* The region of image containing the face is resized to **48x48** and is passed as input to the CNN.
+
+* The network outputs a list of **softmax scores** for the seven classes of emotions.
+
+* The emotion with maximum score is displayed on the screen.
+
+## References
+
+* "Challenges in Representation Learning: A report on three machine learning contests." I Goodfellow, D Erhan, PL Carrier, A Courville, M Mirza, B
+   Hamner, W Cukierski, Y Tang, DH Lee, Y Zhou, C Ramaiah, F Feng, R Li,  
+   X Wang, D Athanasakis, J Shawe-Taylor, M Milakov, J Park, R Ionescu,
+   M Popescu, C Grozea, J Bergstra, J Xie, L Romaszko, B Xu, Z Chuang, and
+   Y. Bengio. arXiv 2013.
